@@ -2,6 +2,7 @@ package com.example.mxu24.motosensorcombination;
 
 
 import android.app.Activity;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +10,16 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -50,22 +57,40 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity implements DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        SensorDataStream.SensorDataStreamOperator,VehicleMessageBuffer.VehicleJSONData{
+        SensorDataStream.SensorDataStreamOperator,VehicleMessageBuffer.VehicleJSONData, VehicleDataFragment.OnFragmentInteractionListener{
 
     private GoogleApiClient mGoogleApiClient;
+    private SlidingTabLayout slidingTabLayout;
+    private ViewPager viewPager;
+    private List<Fragment> fragments;
+    DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
 
     private final static String TAG = "Main";
     private VehicleManager mVehicleManager;
     private VehicleMessageBuffer vehicleMessageBuffer;
     private TextView mTextView;
     private SensorDataStream sensorDataStream;
-    private JSONArray vehicleData;
-    private JSONArray sensorData;
+    public JSONArray vehicleData;
+    public JSONArray sensorData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTextView = (TextView)findViewById(R.id.hello);
+
+        slidingTabLayout = (SlidingTabLayout) findViewById(R.id.tab);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        //fragments = new ArrayList<Fragment>();
+        //fragments.add(new VehicleDataFragment());
+
+        mDemoCollectionPagerAdapter =
+                new DemoCollectionPagerAdapter(
+                        getSupportFragmentManager());
+        viewPager.setAdapter(mDemoCollectionPagerAdapter);
+        //slidingTabLayout.setDistributeEvenly(true);
+        slidingTabLayout.setViewPager(viewPager);
+
+        //mTextView = (TextView)findViewById(R.id.hello);
         vehicleMessageBuffer = new VehicleMessageBuffer(this);
         sensorDataStream = new SensorDataStream(this);
         vehicleData = new JSONArray();
@@ -154,8 +179,8 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
 
-                    mTextView.setText("Vehicle speed (km/h): "
-                     + speed.getValue().doubleValue());
+                    //mTextView.setText("Vehicle speed (km/h): "
+                     //+ speed.getValue().doubleValue());
                 }
             });
         }
@@ -211,6 +236,7 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
         try {
             allData.put("Vehicle Data", jsonArray);
             vehicleData = jsonArray;
+            mDemoCollectionPagerAdapter.dataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -314,5 +340,41 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+
+    }
+
+    public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        private Fragment fragment = new VehicleDataFragment();
+        public DemoCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            //Fragment fragment = new VehicleDataFragment();
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "OBJECT " + (position + 1);
+        }
+
+
+        public void dataSetChanged(){
+            //super.notifyDataSetChanged();
+            VehicleDataFragment f = (VehicleDataFragment)getItem(0);
+            f.dataChanged();
+        }
+    }
+
 }
 
