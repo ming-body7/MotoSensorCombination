@@ -2,6 +2,7 @@ package com.example.mxu24.motosensorcombination;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.app.ListFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,24 +10,20 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.TextView;
+import android.widget.ListView;
 
-
-import com.example.mxu24.motosensorcombination.dummy.DummyContent;
+import com.example.mxu24.motosensorcombination.dummy.dummy.DummyContent;
 
 import org.json.JSONArray;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class VehicleDataFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class SensorDataFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,23 +34,15 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener2 mListener;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
-    private AbsListView mListView;
-    private VehicleDataAdapter mAdapter;
-    private JSONArray mVehicleData;
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    //private ListAdapter mAdapter;
+    private ListView mListView;
+    private SensorDataAdapter mAdapter;
+    private JSONArray mSensorData;
 
     // TODO: Rename and change types of parameters
-    public static VehicleDataFragment newInstance(String param1, String param2) {
-        VehicleDataFragment fragment = new VehicleDataFragment();
+    public static SensorDataFragment newInstance(String param1, String param2) {
+        SensorDataFragment fragment = new SensorDataFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,7 +54,7 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public VehicleDataFragment() {
+    public SensorDataFragment() {
     }
 
     @Override
@@ -78,23 +67,23 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
         }
 
         // TODO: Change Adapter to display your content
-        //mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                //android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        //setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
+                //android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
         MainActivity activity = (MainActivity) getActivity();
-        mAdapter = new VehicleDataAdapter(activity,activity.vehicleData);
+        mAdapter = new SensorDataAdapter(activity,activity.sensorData);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vehicledata, container, false);
+        View view = inflater.inflate(R.layout.fragment_sensordata, container, false);
 
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView = (ListView) view.findViewById(R.id.sensorListView);
         //((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
         mListView.setAdapter(mAdapter);
         // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        //mListView.setOnItemClickListener(this);
 
         return view;
     }
@@ -103,7 +92,7 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener2) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -116,39 +105,15 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
         mListener = null;
     }
 
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
-    public void dataChanged(){
+    public void dataChanged() {
         if (mAdapter!=null) {
             MainActivity activity = (MainActivity) getActivity();
-            if(activity.vehicleData!=null){
-                mVehicleData = activity.vehicleData;
-                mAdapter.vehicleData = mVehicleData;
-                mAdapter.notifyDataSetChanged();
-            }
-            }
+            mSensorData = activity.sensorData;
+            mAdapter.sensorData = mSensorData;
+            mAdapter.notifyDataSetChanged();}
     }
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -159,9 +124,9 @@ public class VehicleDataFragment extends Fragment implements AbsListView.OnItemC
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnFragmentInteractionListener2 {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction2(String id);
     }
 
 }

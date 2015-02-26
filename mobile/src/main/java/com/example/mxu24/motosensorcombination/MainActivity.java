@@ -57,12 +57,13 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity implements DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        SensorDataStream.SensorDataStreamOperator,VehicleMessageBuffer.VehicleJSONData, VehicleDataFragment.OnFragmentInteractionListener{
+        SensorDataStream.SensorDataStreamOperator,VehicleMessageBuffer.VehicleJSONData,
+        VehicleDataFragment.OnFragmentInteractionListener, SensorDataFragment.OnFragmentInteractionListener2, LogicFragment.OnFragmentInteractionListener3{
 
     private GoogleApiClient mGoogleApiClient;
     private SlidingTabLayout slidingTabLayout;
     private ViewPager viewPager;
-    private List<Fragment> fragments;
+    //private List<Fragment> fragments;
     DemoCollectionPagerAdapter mDemoCollectionPagerAdapter;
 
     private final static String TAG = "Main";
@@ -70,8 +71,11 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
     private VehicleMessageBuffer vehicleMessageBuffer;
     private TextView mTextView;
     private SensorDataStream sensorDataStream;
+
     public JSONArray vehicleData;
     public JSONArray sensorData;
+    private List<Fragment> fragments;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +84,10 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.tab);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        //fragments = new ArrayList<Fragment>();
-        //fragments.add(new VehicleDataFragment());
+        fragments = new ArrayList<Fragment>();
+        fragments.add(new VehicleDataFragment());
+        fragments.add(new SensorDataFragment());
+        fragments.add(new LogicFragment());
 
         mDemoCollectionPagerAdapter =
                 new DemoCollectionPagerAdapter(
@@ -254,6 +260,7 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
     @Override
     public void receiveSensorDataStream(JSONArray newArray) throws JSONException {
         JSONObject finalObj = new JSONObject();
+        sensorData = newArray;
         finalObj.put("Sensor", newArray);
         finalObj.put("Vehicle",vehicleData);
         Log.i("Data", finalObj.toString());
@@ -346,6 +353,16 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
 
     }
 
+    @Override
+    public void onFragmentInteraction2(String id) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction3(Uri uri) {
+
+    }
+
     public class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment fragment = new VehicleDataFragment();
         public DemoCollectionPagerAdapter(FragmentManager fm) {
@@ -355,12 +372,12 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
         @Override
         public Fragment getItem(int i) {
             //Fragment fragment = new VehicleDataFragment();
-            return fragment;
+            return fragments.get(i);
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 3;
         }
 
         @Override
@@ -369,10 +386,17 @@ public class MainActivity extends ActionBarActivity implements DataApi.DataListe
         }
 
 
-        public void dataSetChanged(){
+        public void dataSetChanged() throws JSONException {
             //super.notifyDataSetChanged();
             VehicleDataFragment f = (VehicleDataFragment)getItem(0);
+            if(f.isVisible())
             f.dataChanged();
+            SensorDataFragment s = (SensorDataFragment)getItem(1);
+            if(s.isVisible())
+            s.dataChanged();
+            LogicFragment l = (LogicFragment)getItem(2);
+            if(l.isVisible())
+            l.checkAlert();
         }
     }
 

@@ -3,16 +3,21 @@ package com.example.mxu24.motosensorcombination;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LogicFragment.OnFragmentInteractionListener} interface
+ * {@link LogicFragment.OnFragmentInteractionListener3} interface
  * to handle interaction events.
  * Use the {@link LogicFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -27,8 +32,9 @@ public class LogicFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener3 mListener;
 
+    public AlertView speedAlert;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -64,13 +70,17 @@ public class LogicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_logic, container, false);
+        //speedAlert = new AlertView(this);
+        View v = inflater.inflate(R.layout.fragment_logic, container, false);
+        speedAlert = (AlertView)v.findViewById(R.id.alertView);
+        speedAlert.setButtonText("Speed");
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction3(uri);
         }
     }
 
@@ -78,7 +88,7 @@ public class LogicFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener3) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -88,7 +98,29 @@ public class LogicFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
         mListener = null;
+    }
+
+    public void checkAlert() throws JSONException {
+        MainActivity activity = (MainActivity)getActivity();
+        JSONArray vehicleData;// = activity.vehicleData;
+        if(activity.vehicleData!=null) {
+            JSONObject speedData;
+            vehicleData = activity.vehicleData;
+            for (int i = 0; i < vehicleData.length(); i++) {
+                speedData = vehicleData.optJSONObject(i);
+                String name = speedData.keys().next();
+                if (name.equals("vehicle_speed")) {
+                    Double speed = speedData.getDouble("vehicle_speed");
+                    if (speed > speedAlert.value) {
+                        speedAlert.alter();
+                    } else {
+                        speedAlert.normal();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -101,9 +133,9 @@ public class LogicFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnFragmentInteractionListener3 {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onFragmentInteraction3(Uri uri);
     }
 
 }
