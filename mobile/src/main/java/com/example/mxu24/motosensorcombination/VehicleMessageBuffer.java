@@ -44,7 +44,7 @@ public class VehicleMessageBuffer {
     }
 
     public void add(KeyedMessage message) throws JSONException {
-        Log.i(TAG, "get new vehicle message");
+        //Log.i(TAG, "get new vehicle message");
         MessageKey key = message.getKey();
         boolean dataSetChanged = false;
         if(mMessages.containsKey(key)) {

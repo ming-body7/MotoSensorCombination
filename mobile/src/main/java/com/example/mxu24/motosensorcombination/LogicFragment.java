@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +37,8 @@ public class LogicFragment extends Fragment {
     private OnFragmentInteractionListener3 mListener;
 
     public AlertView speedAlert;
+    public AlertView acceleratorAlert;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -74,6 +78,10 @@ public class LogicFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_logic, container, false);
         speedAlert = (AlertView)v.findViewById(R.id.alertView);
         speedAlert.setButtonText("Speed");
+
+        acceleratorAlert = (AlertView)v.findViewById(R.id.acceleratorView);
+        acceleratorAlert.setButtonText("Wearable Acce");
+
         return v;
     }
 
@@ -117,6 +125,29 @@ public class LogicFragment extends Fragment {
                         speedAlert.alter();
                     } else {
                         speedAlert.normal();
+                    }
+                }
+            }
+        }
+
+        JSONArray sensorData;// = activity.vehicleData;
+        if(activity.sensorData!=null) {
+            JSONObject acceleratorData;
+            sensorData = activity.sensorData;
+            for (int i = 0; i < sensorData.length(); i++) {
+                acceleratorData = sensorData.optJSONObject(i);
+                String name = acceleratorData.keys().next();
+                if (name.equals("Accelerometer Sensor")) {
+                    JSONArray accelerator = acceleratorData.getJSONArray("Accelerometer Sensor");
+
+                    Float acc1 = (Float)accelerator.getJSONArray(0).get(0);
+                    Float acc2 = (Float)accelerator.getJSONArray(0).get(1);
+                    Float acc3 = (Float)accelerator.getJSONArray(0).get(2);
+                    double acc = Math.sqrt(acc1*acc1+acc2*acc2+acc3*acc3);
+                    if (acc > acceleratorAlert.value) {
+                        acceleratorAlert.alter();
+                    } else {
+                        acceleratorAlert.normal();
                     }
                 }
             }

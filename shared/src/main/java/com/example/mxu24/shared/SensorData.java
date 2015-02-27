@@ -17,7 +17,8 @@ public class SensorData {
     private float[] values;
     public SensorData(DataMap dataMap){
         this.stringType = (String)dataMap.keySet().toArray()[0];
-        this.type = Integer.valueOf(stringType);
+        //this.type = Integer.valueOf(stringType);
+
         this.values = dataMap.getFloatArray(stringType);
     }
 

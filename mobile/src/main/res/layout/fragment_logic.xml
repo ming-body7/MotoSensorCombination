@@ -12,27 +12,25 @@
         android:id="@+id/textView"
         android:layout_gravity="center" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+
 
     <com.example.mxu24.motosensorcombination.AlertView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/alertView">
+        android:id="@+id/alertView"
+        android:layout_gravity="left|top">
 
     </com.example.mxu24.motosensorcombination.AlertView>
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+
+
+    <com.example.mxu24.motosensorcombination.AlertView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/acceleratorView"
         android:layout_gravity="center_horizontal|top">
+   </com.example.mxu24.motosensorcombination.AlertView>
 
-    </LinearLayout>
 
 </FrameLayout>

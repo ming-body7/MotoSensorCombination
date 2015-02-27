@@ -36,6 +36,7 @@ public class SensorDataStream {
     public void add(SensorData data) throws JSONException {
         String stringType = data.getStringType();
         Log.i(TAG, "data size" + data.getValues().length);
+        Log.i(TAG, "get new sensor message");
         boolean dataSetChanged = false;
 
         if(mSensorEventMap.containsKey(stringType)){

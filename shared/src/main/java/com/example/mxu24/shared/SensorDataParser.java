@@ -15,7 +15,8 @@ public class SensorDataParser {
     private float[] values;
 
     public SensorDataParser(SensorEvent event){
-        this.mSensorType = Integer.toString(event.sensor.getType());
+        //this.mSensorType = Integer.toString(event.sensor.getType());
+        this.mSensorType = event.sensor.getName();
         this.values = event.values;
         Log.i("sensor data size", String.valueOf(event.values.length));
     }
